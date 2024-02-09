@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.java": "java",
+        "arp_sniffer.h": "c",
+        "arp_log.h": "c",
+        "arp_headers.h": "c",
+        "arp_packet.h": "c"
+    }
+}
