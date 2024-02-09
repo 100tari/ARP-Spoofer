@@ -12,7 +12,8 @@
 
 #include <netinet/ip.h>
 #include <netinet/in.h>
-#include <netinet/tcp.h>
+#include <netpacket/packet.h>
 #include <netinet/ether.h>
+#include <net/if.h>
 
 #endif // ARP_COMMON_H
