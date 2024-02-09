@@ -12,7 +12,6 @@
 typedef uint8_t                 IP[IP_LEN];
 typedef uint8_t                 MAC[MAC_LEN];
 
-
 struct arppld
 {
     MAC     SHA;                /* Sender Hardware Address */
@@ -21,5 +20,21 @@ struct arppld
     IP      TPA;                /* Target Protocol Address */
 } __attribute__((__packed__));
 
+struct arppkt
+{
+    struct arphdr   arp_hdr;    /* Packet Header */
+    struct arppld   arp_pld;    /* Packet Payload */
+} __attribute__((__packed__));
+
+struct ethfrm
+{
+    struct ethhdr   eth_hdr;    /* Frame Header */
+    struct arppkt   eth_pld;    /* Frame Payload (Arp Packet) */
+} __attribute__((__packed__));
+
+struct arppkt* make_arp_pkt(MAC const sndr_mac, IP const sndr_ip,
+                            MAC const trgt_mac, IP const trgt_ip, uint16_t op_cod);
+
+struct ethfrm* make_eth_arp_frm(MAC const src_mac, MAC const dst_mac, struct arppkt* arppkt);
 
 #endif // ARP_PACKET_H
