@@ -1,5 +1,21 @@
 #include "ARP_Spoofer.h"
 
+int 
+init_spoofing(const char* const if_name)
+{
+    __CheckNull(if_name);
+
+    int sock_raw;
+    __CheckErr((sock_raw = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP))) < 0, 
+        "Socket Initilizing Failed\n");
+    
+    __CheckErr(setsockopt(sock_raw, SOL_SOCKET, SO_BINDTODEVICE, if_name, strlen(if_name)) < 0,
+        "Socket Option Setting Failed\n");
+    
+    return sock_raw;
+}
+
+
 void 
 broadcast_spoofed_ip(MAC my_mac, IP spoofed_ip, IP target_ip, struct sockaddr_ll* sending_if, int sock_fd)
 {
