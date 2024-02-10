@@ -12,6 +12,8 @@
 typedef uint8_t                 IP[IP_LEN];
 typedef uint8_t                 MAC[MAC_LEN];
 
+#define BROADCAST               (MAC) {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF}
+
 struct arppld
 {
     MAC     SHA;                /* Sender Hardware Address */
