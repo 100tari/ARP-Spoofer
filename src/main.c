@@ -5,50 +5,40 @@
 #include "ARP_Log.h"
 #include "ARP_Utils.h"
 
-int main()
+int main(int args, char* argv[])
 {
-    // unsigned char buff[ETH_FRAME_LEN * sizeof(char)] = {0};
-    // int sock_raw;
+    if(args != 4)
+    {
+        LOG("Usage: %s <interface> <first-ip> <second-ip>", argv[0]);
 
-    // sock_raw = init_capturing("wlan0");
+        exit(EXIT_FAILURE);
+    }
 
-    // while(1)
-    // {
-    //     capture(sock_raw, buff, ETH_FRAME_LEN);
-    //     extract_arp_header(buff);
-    //     extract_arp_payload(buff);
-    //     printf("-----------------------------------------\n");
-    // }    
+    IP frst_ip;
+    IP scnd_ip;
+    MAC my_mac, trgrt_mac;
     
-    // MAC sndr_mac = {0xDC, 0x21, 0x5C, 0x9C, 0xEA, 0x00};
-    // // MAC trgt_mac = {11,12,13,14,15,16};
-    
-    // IP sndr_ip = {192,168,1,1};
-    // IP trgt_ip = {192,168,43,1};
-
-    // // struct arppkt* pkt = make_arp_pkt(sndr_mac, sndr_ip, trgt_mac, trgt_ip, ARPOP_REQUEST);
-
-    // // struct ethfrm* frm = make_eth_arp_frm(sndr_mac, trgt_mac, pkt);
-
-    // int fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-
-    // struct sockaddr_ll dst;
-    // dst.sll_ifindex = if_nametoindex("wlan0");
-
-    // // __CheckErr(sendto(fd, frm, sizeof(*frm), 0, (const struct sockaddr*) &dst, sizeof(dst)) < 0,
-    // // "Sending Failed\n");
-
-    // broadcast_spoofed_ip(sndr_mac, sndr_ip, trgt_ip, &dst, fd);
-
-    // MAC mac;
-    // get_target_mac(fd, trgt_ip, mac);
-
-    // printf(MAC_FORMAT(mac));
-
-    // send_spoofed_ip(sndr_mac, sndr_ip, mac, trgt_ip, &dst, fd);
-
-    MAC my_mac ;
-    get_my_mac("wlan0", my_mac);
-
+    get_my_mac(argv[1], my_mac);
     LOG(MAC_FORMAT(my_mac));
+    LOG("\n");
+
+    sscanf(argv[2], IP_FORMAT((uint32_t*) &frst_ip) );     // TODO
+    LOG(IP_FORMAT(frst_ip));
+    LOG("\n");
+
+    sscanf(argv[3], IP_FORMAT((uint32_t*) &scnd_ip));
+    LOG(IP_FORMAT(scnd_ip));
+    LOG("\n");
+    
+
+    struct sockaddr_ll intrfce;
+    intrfce.sll_ifindex = if_nametoindex(argv[1]);
+
+    int sock = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
+
+    broadcast_spoofed_ip(my_mac, frst_ip, scnd_ip,&intrfce, sock);
+    get_target_mac(sock, scnd_ip, trgrt_mac);
+    send_spoofed_ip(my_mac, frst_ip, trgrt_mac, scnd_ip, &intrfce, sock);
+
+    exit(EXIT_SUCCESS);
 }
