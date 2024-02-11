@@ -5,11 +5,20 @@ init_spoofing(const char* const if_name)
 {
     __CheckNull(if_name);
 
+    __CheckErr(if_nametoindex(if_name) == 0,
+    "INTERFACE NOT EXISTS: make sure interface name is correct\n");
+
     int sock_raw;
     __CheckErr((sock_raw = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP))) < 0, 
         "Socket Initilizing Failed\n");
 
     __CheckErr(setsockopt(sock_raw, SOL_SOCKET, SO_BINDTODEVICE, if_name, strlen(if_name)) < 0,
+        "Socket Option Setting Failed\n");
+
+    struct timeval tv;
+    tv.tv_sec = RECV_TIME_OUT;
+    tv.tv_usec = 0;
+    __CheckErr(setsockopt(sock_raw, SOL_SOCKET, SO_RCVTIMEO, (const char*) &tv, sizeof(tv)) < 0,
         "Socket Option Setting Failed\n");
 
     LOG(">> Spoofer Initiliized Successfully\n");
@@ -49,7 +58,7 @@ get_target_mac(int sock_fd, IP target_ip, MAC target_mac)
     while(1)
     {
         __CheckErr((recv(sock_fd, buffer, ETHER_MAX_LEN, 0)) < 0,
-            "Receiving for getting target mac failed\n");
+            "TIME OUT: make sure host is up\n");
 
         struct ethfrm* eth = (struct ethfrm*) buffer;
 
