@@ -8,11 +8,7 @@
 int main(int args, char* argv[])
 {
     if(args != 4)
-    {
-        LOG("Usage: %s <interface> <first-ip> <second-ip>", argv[0]);
-
-        exit(EXIT_FAILURE);
-    }
+        __CheckErr(1, "Usage: %s <interface> <first-ip> <second-ip>", argv[0]);
 
     IP frst_ip;
     IP scnd_ip;
