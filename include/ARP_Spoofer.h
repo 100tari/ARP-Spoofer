@@ -5,14 +5,27 @@
 #include "ARP_Packet.h"
 #include "ARP_Log.h"
 
-#define RECV_TIME_OUT                     10            // seconds           
+#define RECV_TIME_OUT                       10            // seconds    
+#define SEND_TIME_OUT                       60 
+#define SEND_DELAY                          5      
 
-int init_spoofing(const char* const if_name);
+struct spoofer
+{
+    int                     sock_fd;
+    struct sockaddr_ll*     interfc;
+    IP                      frst_ip;
+    MAC                     frst_mc;
+    IP                      scnd_ip;
+    MAC                     scnd_mc;
+    MAC                     my_mac;
+};
 
-void broadcast_spoofed_ip(MAC my_mac, IP spoofed_ip, IP target_ip, struct sockaddr_ll* sending_if, int sock_fd);
+struct spoofer*     init_spoofing(const char* const if_name, const IP frst_ip, const IP scnd_ip, const MAC my_mac);
 
-void get_target_mac(int sock_fd, IP target_ip, MAC target_mac);
+void                get_targets_mac(const struct spoofer* spoofer);
 
-void send_spoofed_ip(MAC my_mac, IP spoofed_ip, MAC target_mac, IP target_ip, struct sockaddr_ll* sending_if, int sock_fd);
+void                send_spoofed_ip(const struct spoofer* const spoofer);
+
+void                free_spoofer(struct spoofer* spoofer);
 
 #endif // ARP_SPOOFER_H

@@ -49,6 +49,4 @@ get_interface_index(const char* const if_name, struct sockaddr_ll* intrfc)
 
     __CheckErr((intrfc->sll_ifindex = if_nametoindex(if_name)) == 0,
         "INTERFACE NOT EXISTS: make sure interface name is correct\n");
-
-    return intrfc;
 }
