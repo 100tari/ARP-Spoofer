@@ -5,7 +5,9 @@
 #include "ARP_Packet.h"
 #include "ARP_Log.h"
 
-#define RECV_TIME_OUT                     10            // seconds           
+#define RECV_TIME_OUT                       10            // seconds    
+#define SEND_TIME_OUT                       60 
+#define SEND_DELAY                          5      
 
 struct spoofer
 {

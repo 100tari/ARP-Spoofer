@@ -141,7 +141,10 @@ send_spoofed_ip(const struct spoofer* const spoofer)
 
     char str_ip[IP_LEN*4];
 
-    while(1)
+    time_t begin;
+    time(&begin);
+
+    while((time(NULL) - begin) < SEND_TIME_OUT)
     {
         __CheckErr(sendto(spoofer->sock_fd, frst_frm, sizeof(*frst_frm), 0, (const struct sockaddr*) spoofer->interfc, sizeof(*spoofer->interfc)) < 0,
             "Sending Spoofed IP To Target Failed\n");
@@ -155,8 +158,10 @@ send_spoofed_ip(const struct spoofer* const spoofer)
         sprintf(str_ip, IP_FORMAT(spoofer->frst_ip));
         LOG(">> Spoofed IP Sent Successfully to %s\n", str_ip);
 
-        sleep(5);
+        sleep(SEND_DELAY);
     }
+
+    LOG(">> Sending Spoofed IP Time out\n");
 
     free(frst_pkt);
     free(frst_frm);
