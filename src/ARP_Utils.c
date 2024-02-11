@@ -28,15 +28,14 @@ void
 str_to_ip(const char* const str_ip, IP ip)
 {
     __CheckNull(str_ip);
+    __CheckNull(ip);
 
     struct sockaddr_in tmp;
-    inet_pton(AF_INET, str_ip, &(tmp.sin_addr));
+    __CheckErr(inet_pton(AF_INET, str_ip, &(tmp.sin_addr)) != 1,
+        "IP BAD FORMAT: IP incorrect format, it must be in format x.x.x.x which 0<=x<=255\n");
 
     for(int i = IP_LEN-1 ; i >= 0 ; --i)
         ip[i] = tmp.sin_addr.s_addr >> i*8;
-
-    __CheckErr(memcmp(ip, (IP) {0,0,0,0}, IP_LEN) == 0,
-        "IP BAD FORMAT: IP incorrect format, it must be in format x.x.x.x which 0<=x<=255\n");
 }
 
 struct sockaddr_ll*
