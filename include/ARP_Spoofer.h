@@ -5,6 +5,8 @@
 #include "ARP_Packet.h"
 #include "ARP_Log.h"
 
+#define RECV_TIME_OUT                     10            // seconds           
+
 int init_spoofing(const char* const if_name);
 
 void broadcast_spoofed_ip(MAC my_mac, IP spoofed_ip, IP target_ip, struct sockaddr_ll* sending_if, int sock_fd);
