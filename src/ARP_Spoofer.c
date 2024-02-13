@@ -121,6 +121,8 @@ get_targets_mac(const struct spoofer* spoofer)
 void
 send_spoofed_ip(const struct spoofer* const spoofer)
 {  
+    __CheckNull(spoofer); 
+    
     __CheckErr(memcmp(spoofer->scnd_mc, (IP) {0,0,0,0}, sizeof(IP)) == 0,
         "MAC ADDRESS NOT FOUND: make sure targets mac address is set\n");
 
